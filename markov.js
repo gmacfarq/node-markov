@@ -1,3 +1,4 @@
+"use strict"
 /** Textual markov chain generator. */
 
 
@@ -15,7 +16,7 @@ class MarkovMachine {
   /** Get markov chain: returns object of Markov chains.
    *
    *  For text of "The cat in the hat.", chains will be:
-   * 
+   *
    *  {
    *   "The": ["cat"],
    *   "cat": ["in"],
@@ -23,11 +24,23 @@ class MarkovMachine {
    *   "the": ["hat."],
    *   "hat.": [null],
    *  }
-   * 
+   *
    * */
 
   getChains() {
-    // TODO: implement this!
+      let chains = {}
+
+      for (let i = 0; i<this.words.length; i++){
+        let currWord = this.words[i];
+        let nextWord = this.words[i+1] || null;
+
+        if(!chains[currWord]){
+          chains[currWord] = [];
+        }
+        chains[currWord].push(nextWord);
+      }
+
+      return chains;
   }
 
 
@@ -35,10 +48,30 @@ class MarkovMachine {
    *  until it hits a null choice. */
 
   getText() {
-    // TODO: implement this!
+    let wordsArray = [];
+    let wordToAdd = this.words[0];
 
-    // - start at the first word in the input text
-    // - find a random word from the following-words of that
-    // - repeat until reaching the terminal null
+    while(wordToAdd != null){
+      wordsArray.push(wordToAdd);
+      
+      let randomIndex = this.getRandomIndexOfChain(wordToAdd)
+
+      wordToAdd = this.chains[wordToAdd][randomIndex]
+    }
+
+    return wordsArray.join(" ");
+  }
+
+  /**Accepts a key to an object of Markov chains,
+   * Return a random index of the corresponding chain*/
+
+  getRandomIndexOfChain(key){
+    let chainLength = this.chains[key].length
+    let randomIndex = Math.floor(Math.random()*chainLength)
+    return randomIndex;
   }
 }
+
+module.exports = {
+  MarkovMachine,
+};
